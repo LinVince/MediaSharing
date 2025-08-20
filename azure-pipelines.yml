@@ -1,17 +1,46 @@
-# HTML
-# Archive your static HTML project and save it with the build record.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+- main   # run pipeline on pushes to main branch
 
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  NODE_VERSION: '22.x'
+
 steps:
+# Install Node.js
+- task: NodeTool@0
+  inputs:
+    versionSpec: '$(NODE_VERSION)'
+  displayName: 'Install Node.js'
+
+# Install dependencies and build (if applicable)
+- script: |
+    npm install
+    npm run build || echo "No build step found"
+  displayName: 'Install & Build'
+
+# Archive your files for deployment
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(build.sourcesDirectory)'
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
     includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+  displayName: 'Archive Files'
+
+# Publish artifact (optional)
 - task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+  displayName: 'Publish Artifact'
+
+# Deploy to Azure Web App using the service connection
+- task: AzureWebApp@1
+  displayName: 'Deploy to VShareAppPipe'
+  inputs:
+    azureSubscription: 'VShareAppPCon'   # your service connection
+    appName: 'VShareAppP'                  # Web App name in Azure Portal
+    package: '$(Build.ArtifactStagingDirectory)/app.zip'
