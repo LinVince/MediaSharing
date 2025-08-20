@@ -1,111 +1,93 @@
-:root {
-  --bg: #0b1017;
-  --card: #121a23;
-  --muted: #9fb0c0;
-  --text: #e9f0f6;
-  --accent: #6ee7ff;
-  --accent-2: #9effa8;
-  --danger: #ff7b7b;
-  --ring: rgba(110, 231, 255, 0.5);
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-  --radius: 16px;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Gallery & Uploader</title>
+   <link rel="stylesheet" type="text/css" href="styles.css">
 
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0; 
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-  background: radial-gradient(1000px 600px at 10% -10%, rgba(110,231,255,0.06), transparent 60%),
-              radial-gradient(800px 500px at 110% 0%, rgba(158,255,168,0.05), transparent 60%),
-              var(--bg);
-  color: var(--text);
-}
+</head>
+<body>
+  <header>
+    <div class="container" style="padding-bottom: 10px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap: 12px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap: 10px;">
+          <div class="pill">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12C3 7.029 7.029 3 12 3s9 4.029 9 9-4.029 9-9 9-9-4.029-9-9Z" stroke="currentColor" stroke-width="1.5"/><path d="M7 13.5 10 16.5 17 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Image Gallery & Uploader
+          </div>
+        </div>
+        <div class="actions">
+          <button id="refreshBtn" title="Reload images">Reload</button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-header {
-  position: sticky; top: 0; z-index: 10;
-  backdrop-filter: blur(8px);
-  background: linear-gradient(180deg, rgba(11,16,23,.9), rgba(11,16,23,.6) 70%, transparent);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
+  <main class="container">
+    <div class="row">
+      <!-- Gallery -->
+      <section class="card" aria-labelledby="gallery-title">
+        <div class="head">
+          <h2 id="gallery-title">Gallery</h2>
+          <div id="loadState" class="notice" aria-live="polite"></div>
+        </div>
+        <div class="body">
+          <div id="gallery" class="grid" role="list"></div>
+          <div id="emptyState" class="empty" style="display:none">No images found.</div>
+        </div>
+      </section>
 
-.container { max-width: 1100px; margin: 0 auto; padding: 16px 20px 32px; }
+      <!-- Uploader -->
+      <section class="card" aria-labelledby="uploader-title">
+        <div class="head"><h2 id="uploader-title">Upload</h2></div>
+        <div class="body">
+          <form id="uploadForm" class="form" autocomplete="off">
+            <div class="field">
+              <label for="userID">User ID</label>
+              <input id="userID" name="userID" type="text" placeholder="e.g., 12345" required />
+            </div>
+            <div class="field">
+              <label for="userName">User Name</label>
+              <input id="userName" name="userName" type="text" placeholder="e.g., Jane Doe" required />
+            </div>
 
-.row { display: grid; grid-template-columns: 1fr; gap: 16px; }
-@media (min-width: 900px) { .row { grid-template-columns: 1.2fr .8fr; } }
+            <div class="field">
+              <label for="fileInput">Choose image</label>
+              <div id="dropzone" class="dropzone" tabindex="0">Drop image here or click to choose</div>
+              <input id="fileInput" name="file" type="file" accept="image/*" style="display:none" />
+              <div class="notice" id="fileName">No file selected</div>
+            </div>
 
-.card {
-  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
+            <div class="field">
+              <label for="filename">Filename (optional — defaults to the selected file name)</label>
+              <input id="filename" name="filename" type="text" placeholder="my-photo.jpg" />
+            </div>
 
-.card h2 { margin: 0; font-size: 1.1rem; letter-spacing: .2px; }
-.card .head { display:flex; align-items:center; justify-content:space-between; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
-.card .body { padding: 16px; }
+            <div class="field">
+              <div class="progress" aria-label="Upload progress" aria-live="polite"><div id="progressBar" class="bar"></div></div>
+              <div class="notice" id="status"></div>
+              <div class="error" id="error"></div>
+            </div>
 
-.actions { display:flex; gap:8px; flex-wrap: wrap; }
+            <div class="actions">
+              <button type="submit">Upload</button>
+              <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+            </div>
+          </form>
+          <p class="notice" style="margin-top:10px">
+            Heads up: these endpoints must allow browser requests (CORS). If you see network errors, your Logic App may need CORS enabled.
+          </p>
+        </div>
+      </section>
+    </div>
 
-button, .btn {
-  appearance: none;
-  border: 1px solid rgba(255,255,255,.12);
-  background: linear-gradient(180deg, #18212a, #111821);
-  color: var(--text);
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600; letter-spacing: .3px;
-  transition: transform .04s ease, box-shadow .2s ease, border-color .2s ease;
-  box-shadow: 0 4px 18px rgba(110,231,255,0.08);
-}
-button:hover { border-color: var(--accent); box-shadow: 0 6px 24px rgba(110,231,255,.14); }
-button:active { transform: translateY(1px); }
-.btn-secondary { background: linear-gradient(180deg, #131b24, #0f161e); }
+    <footer>
+      Powered by plain HTML, CSS & JavaScript. Endpoints are configurable in the script.
+    </footer>
+  </main>
 
-.notice { font-size: .9rem; color: var(--muted); }
-.pill { display:inline-flex; align-items:center; gap:8px; font-size:.85rem; background: #0f1720; padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.06) }
+  <script src="app.js"></script>
+</body>
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-.tile {
-  position: relative; overflow: hidden; border-radius: 14px; border: 1px solid rgba(255,255,255,.06);
-  background: #0f1620;
-  min-height: 160px;
-  display: flex; align-items: center; justify-content: center;
-}
-.tile img { width: 100%; height: 100%; object-fit: cover; display:block; }
-.tile .meta {
-  position:absolute; left:8px; right:8px; bottom:8px;
-  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.55));
-  padding: 28px 10px 8px; border-radius: 10px; font-size: .8rem; color: #cfe2f0;
-}
-
-.empty { text-align:center; padding: 28px; color: var(--muted); }
-
-.form { display: grid; gap: 12px; }
-.field { display:grid; gap: 6px; }
-label { font-size:.9rem; color:#bcd2e4; }
-input[type="text"], input[type="file"] {
-  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,.12);
-  background: #0f1620; color: var(--text);
-  outline: none; transition: border-color .2s ease, box-shadow .2s ease;
-}
-input:focus { border-color: var(--accent); box-shadow: 0 0 0 6px var(--ring); }
-
-.dropzone {
-  border: 2px dashed rgba(255,255,255,.18); border-radius: 14px; padding: 16px; text-align:center; color: var(--muted);
-  transition: border-color .2s ease, background .2s ease;
-}
-.dropzone.dragover { border-color: var(--accent-2); background: rgba(158,255,168,.06); }
-
-.progress { height: 10px; background: #0f1720; border:1px solid rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
-.bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .2s ease; }
-
-.error { color: var(--danger); font-size: .9rem; }
-.success { color: var(--accent-2); font-size: .95rem; }
-
-.spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.14); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-footer { text-align:center; color: var(--muted); padding: 20px; font-size: .85rem; }
-a.inline { color: var(--accent); text-decoration: none; }
+</html>
