@@ -1,416 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Image Gallery & Uploader</title>
-  <style>
-    :root {
-      --bg: #0b1017;
-      --card: #121a23;
-      --muted: #9fb0c0;
-      --text: #e9f0f6;
-      --accent: #6ee7ff;
-      --accent-2: #9effa8;
-      --danger: #ff7b7b;
-      --ring: rgba(110, 231, 255, 0.5);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 16px;
-    }
+:root {
+  --bg: #0b1017;
+  --card: #121a23;
+  --muted: #9fb0c0;
+  --text: #e9f0f6;
+  --accent: #6ee7ff;
+  --accent-2: #9effa8;
+  --danger: #ff7b7b;
+  --ring: rgba(110, 231, 255, 0.5);
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --radius: 16px;
+}
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1000px 600px at 10% -10%, rgba(110,231,255,0.06), transparent 60%),
-                  radial-gradient(800px 500px at 110% 0%, rgba(158,255,168,0.05), transparent 60%),
-                  var(--bg);
-      color: var(--text);
-    }
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; 
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background: radial-gradient(1000px 600px at 10% -10%, rgba(110,231,255,0.06), transparent 60%),
+              radial-gradient(800px 500px at 110% 0%, rgba(158,255,168,0.05), transparent 60%),
+              var(--bg);
+  color: var(--text);
+}
 
-    header {
-      position: sticky; top: 0; z-index: 10;
-      backdrop-filter: blur(8px);
-      background: linear-gradient(180deg, rgba(11,16,23,.9), rgba(11,16,23,.6) 70%, transparent);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
+header {
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(11,16,23,.9), rgba(11,16,23,.6) 70%, transparent);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
 
-    .container { max-width: 1100px; margin: 0 auto; padding: 16px 20px 32px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 16px 20px 32px; }
 
-    .row { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    @media (min-width: 900px) { .row { grid-template-columns: 1.2fr .8fr; } }
+.row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 900px) { .row { grid-template-columns: 1.2fr .8fr; } }
 
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
 
-    .card h2 { margin: 0; font-size: 1.1rem; letter-spacing: .2px; }
-    .card .head { display:flex; align-items:center; justify-content:space-between; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
-    .card .body { padding: 16px; }
+.card h2 { margin: 0; font-size: 1.1rem; letter-spacing: .2px; }
+.card .head { display:flex; align-items:center; justify-content:space-between; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.card .body { padding: 16px; }
 
-    .actions { display:flex; gap:8px; flex-wrap: wrap; }
+.actions { display:flex; gap:8px; flex-wrap: wrap; }
 
-    button, .btn {
-      appearance: none;
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, #18212a, #111821);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 600; letter-spacing: .3px;
-      transition: transform .04s ease, box-shadow .2s ease, border-color .2s ease;
-      box-shadow: 0 4px 18px rgba(110,231,255,0.08);
-    }
-    button:hover { border-color: var(--accent); box-shadow: 0 6px 24px rgba(110,231,255,.14); }
-    button:active { transform: translateY(1px); }
-    .btn-secondary { background: linear-gradient(180deg, #131b24, #0f161e); }
+button, .btn {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(180deg, #18212a, #111821);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600; letter-spacing: .3px;
+  transition: transform .04s ease, box-shadow .2s ease, border-color .2s ease;
+  box-shadow: 0 4px 18px rgba(110,231,255,0.08);
+}
+button:hover { border-color: var(--accent); box-shadow: 0 6px 24px rgba(110,231,255,.14); }
+button:active { transform: translateY(1px); }
+.btn-secondary { background: linear-gradient(180deg, #131b24, #0f161e); }
 
-    .notice { font-size: .9rem; color: var(--muted); }
-    .pill { display:inline-flex; align-items:center; gap:8px; font-size:.85rem; background: #0f1720; padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.06) }
+.notice { font-size: .9rem; color: var(--muted); }
+.pill { display:inline-flex; align-items:center; gap:8px; font-size:.85rem; background: #0f1720; padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.06) }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-    .tile {
-      position: relative; overflow: hidden; border-radius: 14px; border: 1px solid rgba(255,255,255,.06);
-      background: #0f1620;
-      min-height: 160px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .tile img { width: 100%; height: 100%; object-fit: cover; display:block; }
-    .tile .meta {
-      position:absolute; left:8px; right:8px; bottom:8px;
-      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.55));
-      padding: 28px 10px 8px; border-radius: 10px; font-size: .8rem; color: #cfe2f0;
-    }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.tile {
+  position: relative; overflow: hidden; border-radius: 14px; border: 1px solid rgba(255,255,255,.06);
+  background: #0f1620;
+  min-height: 160px;
+  display: flex; align-items: center; justify-content: center;
+}
+.tile img { width: 100%; height: 100%; object-fit: cover; display:block; }
+.tile .meta {
+  position:absolute; left:8px; right:8px; bottom:8px;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.55));
+  padding: 28px 10px 8px; border-radius: 10px; font-size: .8rem; color: #cfe2f0;
+}
 
-    .empty { text-align:center; padding: 28px; color: var(--muted); }
+.empty { text-align:center; padding: 28px; color: var(--muted); }
 
-    .form { display: grid; gap: 12px; }
-    .field { display:grid; gap: 6px; }
-    label { font-size:.9rem; color:#bcd2e4; }
-    input[type="text"], input[type="file"] {
-      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,.12);
-      background: #0f1620; color: var(--text);
-      outline: none; transition: border-color .2s ease, box-shadow .2s ease;
-    }
-    input:focus { border-color: var(--accent); box-shadow: 0 0 0 6px var(--ring); }
+.form { display: grid; gap: 12px; }
+.field { display:grid; gap: 6px; }
+label { font-size:.9rem; color:#bcd2e4; }
+input[type="text"], input[type="file"] {
+  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,.12);
+  background: #0f1620; color: var(--text);
+  outline: none; transition: border-color .2s ease, box-shadow .2s ease;
+}
+input:focus { border-color: var(--accent); box-shadow: 0 0 0 6px var(--ring); }
 
-    .dropzone {
-      border: 2px dashed rgba(255,255,255,.18); border-radius: 14px; padding: 16px; text-align:center; color: var(--muted);
-      transition: border-color .2s ease, background .2s ease;
-    }
-    .dropzone.dragover { border-color: var(--accent-2); background: rgba(158,255,168,.06); }
+.dropzone {
+  border: 2px dashed rgba(255,255,255,.18); border-radius: 14px; padding: 16px; text-align:center; color: var(--muted);
+  transition: border-color .2s ease, background .2s ease;
+}
+.dropzone.dragover { border-color: var(--accent-2); background: rgba(158,255,168,.06); }
 
-    .progress { height: 10px; background: #0f1720; border:1px solid rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
-    .bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .2s ease; }
+.progress { height: 10px; background: #0f1720; border:1px solid rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
+.bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .2s ease; }
 
-    .error { color: var(--danger); font-size: .9rem; }
-    .success { color: var(--accent-2); font-size: .95rem; }
+.error { color: var(--danger); font-size: .9rem; }
+.success { color: var(--accent-2); font-size: .95rem; }
 
-    .spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.14); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.14); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    footer { text-align:center; color: var(--muted); padding: 20px; font-size: .85rem; }
-    a.inline { color: var(--accent); text-decoration: none; }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="container" style="padding-bottom: 10px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap: 12px; flex-wrap:wrap;">
-        <div style="display:flex; align-items:center; gap: 10px;">
-          <div class="pill">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12C3 7.029 7.029 3 12 3s9 4.029 9 9-4.029 9-9 9-9-4.029-9-9Z" stroke="currentColor" stroke-width="1.5"/><path d="M7 13.5 10 16.5 17 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Image Gallery & Uploader
-          </div>
-        </div>
-        <div class="actions">
-          <button id="refreshBtn" title="Reload images">Reload</button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main class="container">
-    <div class="row">
-      <!-- Gallery -->
-      <section class="card" aria-labelledby="gallery-title">
-        <div class="head">
-          <h2 id="gallery-title">Gallery</h2>
-          <div id="loadState" class="notice" aria-live="polite"></div>
-        </div>
-        <div class="body">
-          <div id="gallery" class="grid" role="list"></div>
-          <div id="emptyState" class="empty" style="display:none">No images found.</div>
-        </div>
-      </section>
-
-      <!-- Uploader -->
-      <section class="card" aria-labelledby="uploader-title">
-        <div class="head"><h2 id="uploader-title">Upload</h2></div>
-        <div class="body">
-          <form id="uploadForm" class="form" autocomplete="off">
-            <div class="field">
-              <label for="userID">User ID</label>
-              <input id="userID" name="userID" type="text" placeholder="e.g., 12345" required />
-            </div>
-            <div class="field">
-              <label for="userName">User Name</label>
-              <input id="userName" name="userName" type="text" placeholder="e.g., Jane Doe" required />
-            </div>
-
-            <div class="field">
-              <label for="fileInput">Choose image</label>
-              <div id="dropzone" class="dropzone" tabindex="0">Drop image here or click to choose</div>
-              <input id="fileInput" name="file" type="file" accept="image/*" style="display:none" />
-              <div class="notice" id="fileName">No file selected</div>
-            </div>
-
-            <div class="field">
-              <label for="filename">Filename (optional — defaults to the selected file name)</label>
-              <input id="filename" name="filename" type="text" placeholder="my-photo.jpg" />
-            </div>
-
-            <div class="field">
-              <div class="progress" aria-label="Upload progress" aria-live="polite"><div id="progressBar" class="bar"></div></div>
-              <div class="notice" id="status"></div>
-              <div class="error" id="error"></div>
-            </div>
-
-            <div class="actions">
-              <button type="submit">Upload</button>
-              <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
-            </div>
-          </form>
-          <p class="notice" style="margin-top:10px">
-            Heads up: these endpoints must allow browser requests (CORS). If you see network errors, your Logic App may need CORS enabled.
-          </p>
-        </div>
-      </section>
-    </div>
-
-    <footer>
-      Powered by plain HTML, CSS & JavaScript. Endpoints are configurable in the script.
-    </footer>
-  </main>
-
-  <script>
-    // ===== Configuration =====
-    const GET_ENDPOINT = "https://prod-28.francecentral.logic.azure.com:443/workflows/16ab2c6b25e44fc5b856075ea9809d2e/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=ugwjKNdOcOl86CAd7U1Z0IzlPO7YQfjerJEPAMVRX9U";
-    const UPLOAD_ENDPOINT = "https://prod-03.francecentral.logic.azure.com:443/workflows/c0f9a1206223466e8ac7e5f1f3a16a0b/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=wCr2JEfcm8qJ72dS3Oh1DT6gP2M9AUWMXppBWn4Hahg";
-    const STORAGE_BASE = "https://storageblobdemovlin.blob.core.windows.net/"; // + filepath
-
-    // ===== Elements =====
-    const gallery = document.getElementById('gallery');
-    const emptyState = document.getElementById('emptyState');
-    const loadState = document.getElementById('loadState');
-    const refreshBtn = document.getElementById('refreshBtn');
-
-    const uploadForm = document.getElementById('uploadForm');
-    const fileInput = document.getElementById('fileInput');
-    const fileName = document.getElementById('fileName');
-    const filenameInput = document.getElementById('filename');
-    const progressBar = document.getElementById('progressBar');
-    const statusEl = document.getElementById('status');
-    const errorEl = document.getElementById('error');
-    const resetBtn = document.getElementById('resetBtn');
-    const dropzone = document.getElementById('dropzone');
-
-    function setLoading(isLoading) {
-      if (isLoading) {
-        loadState.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px"><span class="spinner"></span> Loading…</span>';
-      } else {
-        loadState.textContent = '';
-      }
-    }
-
-    function buildUrl(filepath) {
-      if (!filepath) return null;
-      // Ensure we don't duplicate slashes
-      if (STORAGE_BASE.endsWith('/') && filepath.startsWith('/')) {
-        return STORAGE_BASE + filepath.slice(1);
-      }
-      return STORAGE_BASE + filepath;
-    }
-
-    function normalizeList(data) {
-      // Try to handle a few common shapes
-      // Expected: array of objects with `filepath`
-      if (Array.isArray(data)) return data;
-      if (Array.isArray(data?.value)) return data.value;
-      if (Array.isArray(data?.items)) return data.items;
-      return [];
-    }
-
-    async function loadImages() {
-      setLoading(true);
-      emptyState.style.display = 'none';
-      gallery.innerHTML = '';
-      try {
-        const res = await fetch(GET_ENDPOINT, { method: 'GET' });
-        if (!res.ok) throw new Error('Failed to fetch images: ' + res.status + ' ' + res.statusText);
-        const json = await res.json();
-        const items = normalizeList(json);
-
-        const mapped = items.map((item, idx) => {
-          const fp = item.filepath || item.filePath || item.path || item.blobPath || item.key || '';
-          const url = buildUrl(fp);
-          const name = item.fileName || item.name || fp?.split('/').pop() || `image-${idx+1}`;
-          return { url, name, raw: item };
-        }).filter(x => !!x.url);
-
-        if (!mapped.length) {
-          emptyState.style.display = 'block';
-          return;
-        }
-
-        // Render
-        const frag = document.createDocumentFragment();
-        mapped.forEach(({url, name}) => {
-          const li = document.createElement('div');
-          li.className = 'tile';
-          li.setAttribute('role', 'listitem');
-
-          const img = document.createElement('img');
-          img.loading = 'lazy';
-          img.alt = name;
-          img.src = url;
-
-          const meta = document.createElement('div');
-          meta.className = 'meta';
-          meta.textContent = name;
-
-          li.appendChild(img);
-          li.appendChild(meta);
-          frag.appendChild(li);
-        });
-        gallery.appendChild(frag);
-      } catch (err) {
-        console.error(err);
-        emptyState.style.display = 'block';
-        emptyState.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;align-items:center;">\
-          <div class="error">${(err && err.message) ? err.message : 'Unknown error loading images'}</div>\
-          <div class="notice">If this is a CORS issue, enable cross-origin requests on your Logic App HTTP trigger.</div>\
-        </div>`;
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    // Upload with progress using XHR to get onprogress updates
-    function uploadWithProgress(formData) {
-      return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', UPLOAD_ENDPOINT, true);
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const pct = Math.round((e.loaded / e.total) * 100);
-            progressBar.style.width = pct + '%';
-            statusEl.textContent = `Uploading… ${pct}%`;
-          }
-        };
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(xhr.responseText);
-          } else {
-            reject(new Error('Upload failed: ' + xhr.status + ' ' + xhr.statusText + '\n' + xhr.responseText));
-          }
-        };
-        xhr.onerror = () => reject(new Error('Network error during upload'));
-        xhr.send(formData);
-      });
-    }
-
-    function resetUploadUI() {
-      progressBar.style.width = '0%';
-      statusEl.textContent = '';
-      errorEl.textContent = '';
-    }
-
-    // ===== Event wiring =====
-    refreshBtn.addEventListener('click', loadImages);
-
-    dropzone.addEventListener('click', () => fileInput.click());
-    dropzone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }});
-
-    ;['dragenter','dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dropzone.classList.add('dragover'); }));
-    ;['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dropzone.classList.remove('dragover'); }));
-
-    dropzone.addEventListener('drop', (e) => {
-      const f = e.dataTransfer.files?.[0];
-      if (f) handleFileSelection(f);
-    });
-
-    fileInput.addEventListener('change', () => {
-      const f = fileInput.files?.[0];
-      if (f) handleFileSelection(f);
-    });
-
-    function handleFileSelection(file) {
-      // Ensure it's an image
-      if (!file.type.startsWith('image/')) {
-        errorEl.textContent = 'Please select an image file.';
-        fileInput.value = '';
-        fileName.textContent = 'No file selected';
-        return;
-      }
-      errorEl.textContent = '';
-      fileInput.files = new DataTransfer().files; // clear native (for UX consistency)
-      // But keep a reference on the dropzone element
-      dropzone._file = file;
-      fileName.textContent = `${file.name} (${Math.round(file.size/1024)} KB)`;
-      if (!filenameInput.value) filenameInput.value = file.name;
-    }
-
-    resetBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      uploadForm.reset();
-      dropzone._file = null;
-      fileName.textContent = 'No file selected';
-      resetUploadUI();
-    });
-
-    uploadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      resetUploadUI();
-
-      const userID = uploadForm.userID.value.trim();
-      const userName = uploadForm.userName.value.trim();
-      const chosenFile = dropzone._file; // from dropzone or click
-      const filename = (uploadForm.filename.value || chosenFile?.name || '').trim();
-
-      if (!userID || !userName) {
-        errorEl.textContent = 'User ID and User Name are required.';
-        return;
-      }
-      if (!chosenFile) {
-        errorEl.textContent = 'Please choose an image to upload.';
-        return;
-      }
-
-      const form = new FormData();
-      form.append('userID', userID);
-      form.append('userName', userName);
-      if (filename) form.append('filename', filename);
-      // The file field key is often expected as "file" in Logic Apps; adjust if your flow uses a different name
-      form.append('file', chosenFile, filename || chosenFile.name);
-
-      try {
-        await uploadWithProgress(form);
-        statusEl.innerHTML = '<span class="success">Upload complete ✔</span>';
-        // Reload images to reflect newly uploaded file (if listing endpoint shows it immediately)
-        await loadImages();
-      } catch (err) {
-        console.error(err);
-        errorEl.textContent = err?.message || 'Upload failed';
-      }
-    });
-
-    // Initial load
-    loadImages();
-  </script>
-</body>
-</html>
+footer { text-align:center; color: var(--muted); padding: 20px; font-size: .85rem; }
+a.inline { color: var(--accent); text-decoration: none; }
